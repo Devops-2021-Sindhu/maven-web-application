@@ -106,7 +106,7 @@
 	    <snapshotRepository>
 	      <id>nexus</id>
 	      <name>Mithun Technologies Snapshot Nexus Repository </name>
-	      <url>http://http://65.0.135.25:8081/repository/wallmart-snapshot/</url>
+	      <url>http://65.0.135.25:8081/repository/wallmart-snapshot/</url>
 	    </snapshotRepository>
 	    
 	</distributionManagement>
