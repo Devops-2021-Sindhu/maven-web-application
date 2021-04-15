@@ -1,0 +1,38 @@
+node
+{
+    def mavemHome = tool name: "mavem3.6.3"
+  
+  stage('CheckoutCode')
+  {
+     git branch: 'development', credentialsId: 'decc42db-3a69-458a-a1ba-60f604802c46', url: 'https://github.com/Devops-2021-Sindhu/maven-web-application.git'
+  }
+   
+  stage('Build')
+  {
+   sh "${mavemHome}/bin/mvn clean package"
+  }
+  /*
+  stage('ExecuteSonarQubeReport')
+  {
+   sh "${mavemHome}/bin/mvn sonar:sonar"
+  }
+
+  stage('UploadArtifactintoNexus')
+  {
+   sh "${mavemHome}/bin/mvn deploy"
+  }
+  stage('DeployAppIntoTomcatServer')
+  {
+   sshagent(['e8fe7786-933a-4783-afdd-4e356d821554']) {
+    sh "scp -o StrictHostKeyChecking=no target/maven-web-application.war ec2-user@65.2.38.143:/opt/apache-tomcat-9.0.44/webapps/"
+   }
+  }
+  */ 
+  stage('SendEmailNotification')
+  {
+   emailext body: '''Build Over Scriptedway
+   Regards,
+   nagasindhu,
+   7075752736''', subject: 'Build Over Scriptedway', to: 'nagasindhu19992@gmail.com'
+  }
+}
