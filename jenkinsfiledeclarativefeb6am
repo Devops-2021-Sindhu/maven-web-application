@@ -1,0 +1,73 @@
+pipeline
+{
+ agent any
+ 
+ tools {
+ maven 'mavem3.6.3'
+ }
+  triggers{
+ pollSCM('* * * * *')
+ }
+ 
+ options{
+ //add timestamp to the consoleoutput
+ timestamps()
+ //discard old builds
+  buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '3', daysToKeepStr: '', numToKeepStr: '3'))
+ }
+ 
+ stages{
+    stage('CheckOutCode')
+	{
+	  steps{
+	         git branch: 'development', credentialsId: 'decc42db-3a69-458a-a1ba-60f604802c46', url: 'https://github.com/Devops-2021-Sindhu/maven-web-application.git'
+			}
+	}
+
+    stage('Build')
+    {
+	  steps{
+	   sh "mvn clean package"
+	  }
+	}
+	stage('ExecuteSonarQubeReport')
+	{
+	  steps{
+	   sh "mvn sonar:sonar"
+	  }
+	
+	}
+	stage('UploadArtifactintoNexus')
+	{
+	  steps{
+	   sh "mvn deploy"
+	  }
+	
+	}
+	stage('DeployAppIntoTomcatServer')
+	{
+	  steps{
+	   sshagent(['e8fe7786-933a-4783-afdd-4e356d821554']) {
+       sh "scp -o StrictHostKeyChecking=no target/maven-web-application.war ec2-user@13.233.97.145:/opt/apache-tomcat-9.0.44/webapps/"
+	   } 
+	  }
+	
+	}
+
+ }
+ 	post{
+	 success{
+	         emailext body: '''Build is success - Declarative way
+             regards,
+             nagasindhu''', subject: 'Build is over - Declarative way', to: 'nagasindhu19992@gmail.com,gourunagasindhu1999@gmail.com'		
+	  
+	        }
+	    failure{
+	  
+	       emailext body: '''Build is failure - Declarative way
+           regards,
+           nagasindhu''', subject: 'Build is over - Declarative way', to: 'nagasindhu19992@gmail.com,gourunagasindhu1999@gmail.com'
+	      }
+    	}
+ 
+}
