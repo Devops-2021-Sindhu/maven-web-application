@@ -1,8 +1,15 @@
 node
 {
     def mavemHome = tool name: "mavem3.6.3"
+    //echo "GitHub BranhName ${env.BRANCH_NAME}"
+  //echo "Jenkins Job Number ${env.BUILD_NUMBER}"
+  echo "Jenkins Node Name ${env.NODE_NAME}"
   
-  stage('CheckoutCode')
+  echo "Jenkins Home ${env.JENKINS_HOME}"
+  echo "Jenkins URL ${env.JENKINS_URL}"
+  echo "JOB Name ${env.JOB_NAME}"
+   
+   stage('CheckoutCode')
   {
      git branch: 'development', credentialsId: 'decc42db-3a69-458a-a1ba-60f604802c46', url: 'https://github.com/Devops-2021-Sindhu/maven-web-application.git'
   }
