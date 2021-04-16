@@ -1,4 +1,4 @@
-node
+node('nodejsinstance')
 {
     def mavemHome = tool name: "mavem3.6.3"
     //echo "GitHub BranhName ${env.BRANCH_NAME}"
