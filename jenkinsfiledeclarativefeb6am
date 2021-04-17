@@ -20,14 +20,10 @@ pipeline {
      * some of the supported tools - maven, jdk, gradle,git
      */
     tools {
-        maven 'maven3.6.3' 
+        maven 'mavem3.6.3' 
     }
     
-    triggers {
    
-     pollSCM('* * * * *')
-    
-   }
    
    
    // Configure Pipeline-specific options
@@ -51,7 +47,7 @@ pipeline {
         
         stage('CheckoutCode') {
             steps {
-                git branch: 'stage', credentialsId: 'fc8c3d87-2a92-4de9-9e00-c38f5e780b97', url: 'https://github.com/MithunTechnologiesDevOps/maven-web-application.git'
+                git branch: 'development', credentialsId: 'decc42db-3a69-458a-a1ba-60f604802c46', url: 'https://github.com/Devops-2021-Sindhu/maven-web-application.git'
             
                 sh "echo CF_VERSION ${CF_VERSION}"
             }
