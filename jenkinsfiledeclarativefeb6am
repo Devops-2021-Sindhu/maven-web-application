@@ -1,5 +1,5 @@
 #!/usr/bin/env grrovy
-/* Declarative pipeline must be enclosed within a pipeline block */
+* Declarative pipeline must be enclosed within a pipeline block */
 pipeline {
      /*agent section specifies where the entire Pipeline script will execute in the Jenkins environment */
     //agent any
@@ -20,16 +20,12 @@ pipeline {
      * some of the supported tools - maven, jdk, gradle,git
      */
     tools {
-        maven 'mavem3.6.3' 
+        maven 'maven3.6.3' 
     }
     
     triggers {
-     //Poll SCM
+   
      pollSCM('* * * * *')
-     //Buid Periodically
-     cron('* * * * *')
-     //GitHub WebHook
-     githubPush()
     
    }
    
@@ -41,7 +37,7 @@ pipeline {
        timestamps()
        overrideIndexTriggers(false)
        // timeout job after 60 minutes
-       timeout(time: 3,unit: 'MINUTES')
+       timeout(time: 60,unit: 'MINUTES')
        // Keep only last 5 builds
        buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '5', daysToKeepStr: '', numToKeepStr: '5'))
        disableConcurrentBuilds()
@@ -51,12 +47,11 @@ pipeline {
      * stages contain one or more stage directives
      */
     stages {
-         stage('CheckoutCode') {
-             /*agent { 
-             label 'master'
-             }*/
+       
+        
+        stage('CheckoutCode') {
             steps {
-               git branch: 'development', credentialsId: 'decc42db-3a69-458a-a1ba-60f604802c46', url: 'https://github.com/Devops-2021-Sindhu/maven-web-application.git'
+                git branch: 'stage', credentialsId: 'fc8c3d87-2a92-4de9-9e00-c38f5e780b97', url: 'https://github.com/MithunTechnologiesDevOps/maven-web-application.git'
             
                 sh "echo CF_VERSION ${CF_VERSION}"
             }
@@ -67,88 +62,4 @@ pipeline {
                sh 'mvn clean package'
             }
         }
-        
-        stage ('JaCoCoReport') {
-           steps {
-                jacoco (buildOverBuild: true, 
-                        changeBuildStatus: true, 
-                        deltaBranchCoverage: '80', 
-                        deltaClassCoverage: '80', 
-                        deltaComplexityCoverage: '80', 
-                        deltaInstructionCoverage: '80', 
-                        deltaLineCoverage: '80', 
-                        deltaMethodCoverage: '80', 
-                        maximumBranchCoverage: '80', 
-                        maximumClassCoverage: '80', 
-                        maximumComplexityCoverage: '80', 
-                        maximumInstructionCoverage: '80', 
-                        maximumLineCoverage: '80', 
-                        maximumMethodCoverage: '80', 
-                        minimumBranchCoverage: '80', 
-                        minimumClassCoverage: '80', 
-                        minimumComplexityCoverage: '80', 
-                        minimumInstructionCoverage: '80', 
-                        minimumLineCoverage: '80', 
-                        minimumMethodCoverage: '80', 
-                        skipCopyOfSrcFiles: true)
-           }  
-        }
-        
-        stage('CreateDirectory') {
-            steps {
-                dir('/tmp/bhaskar'){
-                   sh "touch bhaskar.txt" 
-                }
-                }
-        }
-        /*
-        stage('SonarQubeReportExecution') {
-            steps {
-               sh 'mvn sonar: sonar'
-            }
-        }
-        
-        stage('UploadArtifactIntoNexus') {
-            steps {
-               sh 'mvn deploy'
-            }
-        }
-        
-      stage('DeployApplicationIntoTomcat') {
-            steps {
-            // provide SSH credentials to builds via a ssh-agent in Jenkins
-             sshagent(['e8fe7786-933a-4783-afdd-4e356d821554']) {
-             
-              sh "scp -o StrictHostKeyChecking=no target/maven-web-application.war ec2-user@13.126.68.186: /opt/apache-tomcat-9.0.44/webapps/"
-               } 
-            }
-        }
-        */
-    }
-    /*
-    /**
-     * post section defines actions which will be run at the end of the Pipeline run or stage
-     * post section condition blocks: always, changed, failure, success, unstable, and aborted
-     */
-     
-    post {
-        always {
-            cleanWs()
-        }
-        success {   
-              emailext to: 'nagasindhu19992@gmail.com',
-                       subject: "Pipeline Build is over .. Build # is ..${env.BUILD_NUMBER} and Build status is.. ${currentBuild.result}.",
-	                   body: "Pipeline Build is over .. Build # is ..${env.BUILD_NUMBER} and Build status is.. ${currentBuild.result}.",
-	                   replyTo: 'nagasindhu19992@gmail.com'
-			         
-            cleanWs()
-        }
-        failure {
-            emailext to: 'nagasindhu19992@gmail.com',
-                     subject: "Pipeline Build is over .. Build # is ..${env.BUILD_NUMBER} and Build status is.. ${currentBuild.result}.",
-	                 body: "Pipeline Build is over .. Build # is ..${env.BUILD_NUMBER} and Build status is.. ${currentBuild.result}.",
-	                 replyTo: 'nagasindhu19992@gmail.com'
-		 cleanWs()	 
-        }
-    }
 }
