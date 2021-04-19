@@ -59,4 +59,87 @@ pipeline {
                sh 'mvn clean package'
             }
         }
+	stage ('JaCoCoReport') {
+           steps {
+                jacoco (buildOverBuild: true, 
+                        changeBuildStatus: true, 
+                        deltaBranchCoverage: '80', 
+                        deltaClassCoverage: '80', 
+                        deltaComplexityCoverage: '80', 
+                        deltaInstructionCoverage: '80', 
+                        deltaLineCoverage: '80', 
+                        deltaMethodCoverage: '80', 
+                        maximumBranchCoverage: '80', 
+                        maximumClassCoverage: '80', 
+                        maximumComplexityCoverage: '80', 
+                        maximumInstructionCoverage: '80', 
+                        maximumLineCoverage: '80', 
+                        maximumMethodCoverage: '80', 
+                        minimumBranchCoverage: '80', 
+                        minimumClassCoverage: '80', 
+                        minimumComplexityCoverage: '80', 
+                        minimumInstructionCoverage: '80', 
+                        minimumLineCoverage: '80', 
+                        minimumMethodCoverage: '80', 
+                        skipCopyOfSrcFiles: true)
+           }  
+        }
+        
+        stage('CreateDirectory') {
+            steps {
+                dir('/tmp/parvathi'){
+                   sh "touch parvathi.txt" 
+                }
+                }
+        }
+        /*
+        stage('SonarQubeReportExecution') {
+            steps {
+               sh 'mvn sonar: sonar'
+            }
+        }
+        
+        stage('UploadArtifactIntoNexus') {
+            steps {
+               sh 'mvn deploy'
+            }
+        }
+        
+      stage('DeployApplicationIntoTomcat') {
+            steps {
+            // provide SSH credentials to builds via a ssh-agent in Jenkins
+                 sshagent(['e8fe7786-933a-4783-afdd-4e356d821554']) { 
+                      sh "scp -o StrictHostKeyChecking=no target/maven-web-application.war ec2-user@13.234.110.72/: /opt/apache-tomcat-9.0.44/webapps/"
+               } 
+            }
+        }
+        */
+    }
+    /*
+    /**
+     * post section defines actions which will be run at the end of the Pipeline run or stage
+     * post section condition blocks: always, changed, failure, success, unstable, and aborted
+     */
+     
+    post {
+        always {
+            cleanWs()
+        }
+        success {   
+              emailext to: 'nagasindhu19992@gmail.com',
+                       subject: "Pipeline Build is over .. Build # is ..${env.BUILD_NUMBER} and Build status is.. ${currentBuild.result}.",
+	                   body: "Pipeline Build is over .. Build # is ..${env.BUILD_NUMBER} and Build status is.. ${currentBuild.result}.",
+	                   replyTo: 'nagasindhu19992@gmail.com'
+			         
+            cleanWs()
+        }
+        failure {
+            emailext to: 'nagasindhu19992@gmail.com',
+                     subject: "Pipeline Build is over .. Build # is ..${env.BUILD_NUMBER} and Build status is.. ${currentBuild.result}.",
+	                 body: "Pipeline Build is over .. Build # is ..${env.BUILD_NUMBER} and Build status is.. ${currentBuild.result}.",
+	                 replyTo: 'nagasindhu19992@gmail.com'
+		 cleanWs()	 
+        }
+    }
+}
 }
