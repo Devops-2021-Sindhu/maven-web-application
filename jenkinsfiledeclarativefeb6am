@@ -1,5 +1,5 @@
-#!/usr/bin/env grrovy
-* Declarative pipeline must be enclosed within a pipeline block */
+ #!/usr/bin/env grrovy
+/* Declarative pipeline must be enclosed within a pipeline block */
 pipeline {
      /*agent section specifies where the entire Pipeline script will execute in the Jenkins environment */
     //agent any
@@ -23,7 +23,7 @@ pipeline {
         maven 'mavem3.6.3' 
     }
     
-   
+    
    
    
    // Configure Pipeline-specific options
@@ -33,7 +33,7 @@ pipeline {
        timestamps()
        overrideIndexTriggers(false)
        // timeout job after 60 minutes
-       timeout(time: 60,unit: 'MINUTES')
+       timeout(time: 3,unit: 'MINUTES')
        // Keep only last 5 builds
        buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '5', daysToKeepStr: '', numToKeepStr: '5'))
        disableConcurrentBuilds()
@@ -43,9 +43,10 @@ pipeline {
      * stages contain one or more stage directives
      */
     stages {
-       
-        
-        stage('CheckoutCode') {
+         stage('CheckoutCode') {
+             /*agent { 
+             label 'master'
+             }*/
             steps {
                 git branch: 'development', credentialsId: 'decc42db-3a69-458a-a1ba-60f604802c46', url: 'https://github.com/Devops-2021-Sindhu/maven-web-application.git'
             
