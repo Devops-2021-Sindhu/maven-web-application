@@ -4,7 +4,7 @@ pipeline
  agent any
  
  tools {
- mavem 'mavem3.6.3'
+ maven 'mavem3.6.3'
  }
 
  triggers{
@@ -52,30 +52,12 @@ pipeline
 	{
 	  steps{
 	   sshagent(['e8fe7786-933a-4783-afdd-4e356d821554']) {
-       sh "scp -o StrictHostKeyChecking=no target/maven-web-application.war ec2-user@65.2.38.143: /opt/apache-tomcat-9.0.44/webapps/"
+       sh "scp -o StrictHostKeyChecking=no target/maven-web-application.war ec2-user@13.234.110.72: /opt/apache-tomcat-9.0.44/webapps/"
 	   } 
 	  }
 	
 	}
 	
-	post{
 	
-	 
-	  success{
-	    emailext body: '''Build is success - Declarative way
-        regards,
-        nagasindhu''', subject: 'Build is over - Declarative way', to: 'nagasindhu19992@gmail.com,gourunagasindhu1999@gmail.com'		
-	  
-	  }
-	  failure{
-	  
-	  emailext body: '''Build is failure - Declarative way
-      regards,
-      nagasindhu''', subject: 'Build is over - Declarative way', to: 'nagasindhu19992@gmail.com,gourunagasindhu1999@gmail.com'
-	  }
-	
-	}
-	
- }
  
 }
